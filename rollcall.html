@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>點名系統</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FAF6EF;
+    --paper-edge: #F1EAD9;
+    --ink: #2E2A26;
+    --ink-soft: #6B6259;
+    --indigo: #3B4A63;
+    --sage: #7C9885;
+    --sage-deep: #5E7A67;
+    --clay: #B9694A;
+    --clay-deep: #9A5038;
+    --gold: #C9A66B;
+    --line: #E1D8C6;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 48px 20px 80px;
+    background: var(--paper-edge);
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 27px, var(--line) 28px);
+    color: var(--ink);
+    font-family: "Noto Sans TC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .book {
+    max-width: 620px;
+    margin: 0 auto;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: 0 1px 0 rgba(46,42,38,0.04), 0 12px 30px rgba(46,42,38,0.06);
+    padding: 40px 36px 32px;
+  }
+
+  header {
+    text-align: center;
+    padding-bottom: 22px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  header .kicker {
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+
+  h1 {
+    font-family: "Noto Serif TC", serif;
+    font-weight: 700;
+    font-size: 30px;
+    margin: 0;
+    color: var(--indigo);
+  }
+
+  header .date {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+
+  .setup {
+    margin-bottom: 24px;
+  }
+
+  .setup summary {
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--indigo);
+    font-weight: 500;
+    padding: 6px 0;
+  }
+
+  textarea {
+    width: 100%;
+    height: 84px;
+    margin-top: 10px;
+    padding: 12px 14px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-family: "Noto Sans TC", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    color: var(--ink);
+  }
+
+  .setup-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    align-items: center;
+  }
+
+  .file-label {
+    font-size: 13px;
+    color: var(--ink-soft);
+    border: 1px dashed var(--line);
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .file-label input { display: none; }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+    align-items: center;
+  }
+
+  .search {
+    flex: 1;
+    min-width: 140px;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    padding: 8px 2px;
+    font-size: 14px;
+    color: var(--ink);
+    font-family: "Noto Sans TC", sans-serif;
+  }
+  .search:focus { outline: none; border-bottom-color: var(--indigo); }
+
+  button {
+    font-family: "Noto Sans TC", sans-serif;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  button:hover { border-color: var(--indigo); color: var(--indigo); }
+  button:focus-visible { outline: 2px solid var(--indigo); outline-offset: 1px; }
+
+  button.primary {
+    background: var(--indigo);
+    color: #fff;
+    border-color: var(--indigo);
+  }
+  button.primary:hover { background: #2e3b50; color: #fff; }
+
+  button.ghost {
+    border-color: transparent;
+    color: var(--ink-soft);
+  }
+  button.ghost:hover { color: var(--clay-deep); border-color: transparent; }
+
+  .pick-stage {
+    text-align: center;
+    min-height: 34px;
+    margin-bottom: 6px;
+    font-family: "Noto Serif TC", serif;
+    font-size: 19px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  ul.roster {
+    list-style: none;
+    margin: 0 0 22px;
+    padding: 0;
+  }
+
+  ul.roster li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 4px;
+    border-bottom: 1px dotted var(--line);
+  }
+  ul.roster li:focus-within,
+  ul.roster li.focused {
+    background: rgba(59,74,99,0.04);
+  }
+  ul.roster li.spotlight {
+    background: rgba(201,166,107,0.14);
+  }
+
+  .name-block { display: flex; flex-direction: column; }
+  .name {
+    font-family: "Noto Serif TC", serif;
+    font-size: 16px;
+  }
+  .meta {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .stamps { display: flex; gap: 6px; align-items: center; }
+
+  .stamp {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    padding: 0;
+  }
+  .stamp[data-kind="present"].active {
+    background: var(--sage);
+    border-color: var(--sage-deep);
+    color: #fff;
+  }
+  .stamp[data-kind="absent"].active {
+    background: var(--clay);
+    border-color: var(--clay-deep);
+    color: #fff;
+  }
+  .stamp:hover { border-color: var(--indigo); }
+
+  .empty-state {
+    text-align: center;
+    padding: 30px 10px;
+    color: var(--ink-soft);
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  .stats {
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+  .stats-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .stats-row strong { color: var(--ink); font-weight: 600; }
+
+  .bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--line);
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    background: var(--sage);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  .export-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin-top: 24px;
+  }
+
+  @media (max-width: 480px) {
+    .book { padding: 28px 20px 24px; }
+    h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="book">
+  <header>
+    <div class="kicker">課堂點名紀錄</div>
+    <h1>點名簿</h1>
+    <div class="date" id="todayLabel"></div>
+  </header>
+
+  <details class="setup" id="setupBlock">
+    <summary>建立 / 匯入名單</summary>
+    <textarea id="nameInput" placeholder="一行一位，例如：
+王小明
+陳大文
+林小美"></textarea>
+    <div class="setup-row">
+      <button class="primary" onclick="loadStudents()">建立名單</button>
+      <label class="file-label">
+        匯入 .txt 檔
+        <input type="file" id="fileInput" accept=".txt" onchange="importFile(event)">
+      </label>
+      <button class="ghost" onclick="clearAll()">清空重來</button>
+    </div>
+  </details>
+
+  <div class="toolbar">
+    <input class="search" id="searchBox" placeholder="搜尋姓名…" oninput="renderList()">
+    <button onclick="markAll('present')">全部出席</button>
+    <button onclick="markAll('absent')">全部缺席</button>
+    <button onclick="undo()">復原</button>
+    <button class="primary" onclick="randomPick()">隨機點名</button>
+  </div>
+
+  <div class="pick-stage" id="pickResult"></div>
+
+  <ul class="roster" id="studentList"></ul>
+
+  <div class="stats" id="statsBlock" style="display:none;">
+    <div class="stats-row">
+      <span>出席率</span>
+      <strong id="rateLabel">0%</strong>
+    </div>
+    <div class="bar"><div class="bar-fill" id="rateBar"></div></div>
+    <div class="stats-row" style="margin-top:12px;">
+      <span id="countLabel">總人數 0　出席 0　缺席 0　未點 0</span>
+    </div>
+    <div class="export-row">
+      <button onclick="exportResult('txt')">匯出文字檔</button>
+      <button onclick="exportResult('csv')">匯出 CSV</button>
+    </div>
+  </div>
+
+  <footer>資料僅儲存在本機瀏覽器（localStorage），重新整理不會遺失</footer>
+</div>
+
+<script>
+let students = [];      // {name, status, time}
+let history = [];       // for undo: snapshots
+let pickPool = [];      // remaining names for fair random pick
+const STORE_KEY = 'rollcall_v1';
+
+function todayLabel() {
+  const d = new Date();
+  const days = ['日','一','二','三','四','五','六'];
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 星期${days[d.getDay()]}`;
+}
+document.getElementById('todayLabel').textContent = todayLabel();
+
+function save() {
+  localStorage.setItem(STORE_KEY, JSON.stringify(students));
+}
+
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length) {
+        students = parsed;
+        document.getElementById('setupBlock').removeAttribute('open');
+        renderList();
+      }
+    }
+  } catch (e) { /* ignore corrupt data */ }
+}
+
+function snapshot() {
+  history.push(JSON.stringify(students));
+  if (history.length > 30) history.shift();
+}
+
+function undo() {
+  if (history.length === 0) return;
+  students = JSON.parse(history.pop());
+  save();
+  renderList();
+}
+
+function loadStudents() {
+  const raw = document.getElementById('nameInput').value;
+  const names = raw.split('\n').map(n => n.trim()).filter(Boolean);
+  if (!names.length) { alert('請至少輸入一位學生姓名'); return; }
+  snapshot();
+  students = names.map(name => ({ name, status: 'unmarked', time: '' }));
+  document.getElementById('setupBlock').removeAttribute('open');
+  save();
+  renderList();
+}
+
+function importFile(evt) {
+  const file = evt.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('nameInput').value = e.target.result;
+    loadStudents();
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function clearAll() {
+  if (!confirm('確定要清空目前的名單與紀錄嗎？')) return;
+  students = [];
+  history = [];
+  localStorage.removeItem(STORE_KEY);
+  document.getElementById('nameInput').value = '';
+  document.getElementById('setupBlock').setAttribute('open', '');
+  renderList();
+}
+
+function timeNow() {
+  const d = new Date();
+  return d.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+}
+
+function setStatus(index, status) {
+  snapshot();
+  const s = students[index];
+  s.status = s.status === status ? 'unmarked' : status;
+  s.time = s.status === 'unmarked' ? '' : timeNow();
+  save();
+  renderList();
+}
+
+function markAll(status) {
+  if (!students.length) { alert('請先建立名單'); return; }
+  snapshot();
+  const t = timeNow();
+  students.forEach(s => { s.status = status; s.time = t; });
+  save();
+  renderList();
+}
+
+function renderList() {
+  const list = document.getElementById('studentList');
+  const query = document.getElementById('searchBox').value.trim().toLowerCase();
+  list.innerHTML = '';
+
+  if (!students.length) {
+    list.innerHTML = '<div class="empty-state">尚未建立名單 — 在上方展開「建立 / 匯入名單」開始</div>';
+    document.getElementById('statsBlock').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('statsBlock').style.display = 'block';
+
+  students.forEach((s, i) => {
+    if (query && !s.name.toLowerCase().includes(query)) return;
+
+    const li = document.createElement('li');
+    li.id = 'stu-' + i;
+    li.tabIndex = 0;
+    li.addEventListener('keydown', e => {
+      if (e.key === '1') setStatus(i, 'present');
+      if (e.key === '2') setStatus(i, 'absent');
+    });
+
+    const nameBlock = document.createElement('div');
+    nameBlock.className = 'name-block';
+    const nameEl = document.createElement('span');
+    nameEl.className = 'name';
+    nameEl.textContent = s.name;
+    const metaEl = document.createElement('span');
+    metaEl.className = 'meta';
+    metaEl.textContent = s.status === 'unmarked' ? '尚未點名' : (s.status === 'present' ? '出席・' + s.time : '缺席・' + s.time);
+    nameBlock.appendChild(nameEl);
+    nameBlock.appendChild(metaEl);
+
+    const stamps = document.createElement('div');
+    stamps.className = 'stamps';
+
+    const presentBtn = document.createElement('button');
+    presentBtn.className = 'stamp' + (s.status === 'present' ? ' active' : '');
+    presentBtn.dataset.kind = 'present';
+    presentBtn.title = '出席（快捷鍵 1）';
+    presentBtn.textContent = '✓';
+    presentBtn.onclick = () => setStatus(i, 'present');
+
+    const absentBtn = document.createElement('button');
+    absentBtn.className = 'stamp' + (s.status === 'absent' ? ' active' : '');
+    absentBtn.dataset.kind = 'absent';
+    absentBtn.title = '缺席（快捷鍵 2）';
+    absentBtn.textContent = '✕';
+    absentBtn.onclick = () => setStatus(i, 'absent');
+
+    stamps.appendChild(presentBtn);
+    stamps.appendChild(absentBtn);
+
+    li.appendChild(nameBlock);
+    li.appendChild(stamps);
+    list.appendChild(li);
+  });
+
+  updateStats();
+}
+
+function updateStats() {
+  const total = students.length;
+  const present = students.filter(s => s.status === 'present').length;
+  const absent = students.filter(s => s.status === 'absent').length;
+  const unmarked = total - present - absent;
+  const rate = total ? Math.round((present / total) * 100) : 0;
+
+  document.getElementById('rateLabel').textContent = rate + '%';
+  document.getElementById('rateBar').style.width = rate + '%';
+  document.getElementById('countLabel').textContent =
+    `總人數 ${total}　出席 ${present}　缺席 ${absent}　未點 ${unmarked}`;
+}
+
+function randomPick() {
+  if (!students.length) { alert('請先建立名單'); return; }
+  if (pickPool.length === 0) {
+    pickPool = students.map((_, i) => i);
+  }
+  const poolIdx = Math.floor(Math.random() * pickPool.length);
+  const idx = pickPool.splice(poolIdx, 1)[0];
+
+  document.getElementById('pickResult').textContent = '本次點到　' + students[idx].name;
+  document.querySelectorAll('#studentList li').forEach(li => li.classList.remove('spotlight'));
+  const li = document.getElementById('stu-' + idx);
+  if (li) {
+    li.classList.add('spotlight');
+    li.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  if (pickPool.length === 0) {
+    setTimeout(() => {
+      const stage = document.getElementById('pickResult');
+      stage.textContent += '　（本輪已全部點完，下次將重新抽選）';
+    }, 100);
+  }
+}
+
+function exportResult(kind) {
+  if (!students.length) { alert('請先建立名單'); return; }
+  const stamp = new Date().toLocaleString('zh-TW');
+  let content, mime, filename;
+
+  if (kind === 'csv') {
+    content = '姓名,狀態,時間\n' + students.map(s =>
+      `${s.name},${s.status === 'present' ? '出席' : s.status === 'absent' ? '缺席' : '未點名'},${s.time || ''}`
+    ).join('\n');
+    mime = 'text/csv;charset=utf-8';
+    filename = '點名結果.csv';
+  } else {
+    content = `點名結果（${stamp}）\n\n` + students.map(s =>
+      `${s.name}：${s.status === 'present' ? '出席' : s.status === 'absent' ? '缺席' : '未點名'} ${s.time ? '(' + s.time + ')' : ''}`
+    ).join('\n');
+    mime = 'text/plain;charset=utf-8';
+    filename = '點名結果.txt';
+  }
+
+  const blob = new Blob(['\uFEFF' + content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+loadFromStorage();
+renderList();
+</script>
+
+</body>
+</html>
