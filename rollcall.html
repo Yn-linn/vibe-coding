@@ -73,6 +73,36 @@
     font-style: italic;
   }
 
+  .code-board {
+    text-align: center;
+    padding: 16px 12px 14px;
+    margin: -8px 0 24px;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  .code-board[hidden] { display: none; }
+  .code-kicker {
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.12em;
+  }
+  .code-digits {
+    font-family: "Noto Serif TC", serif;
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    color: var(--indigo);
+    line-height: 1.25;
+    margin: 6px 0 4px;
+    padding-left: 0.32em;
+  }
+  .code-actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
   .setup {
     margin-bottom: 24px;
   }
@@ -121,7 +151,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 18px;
+    margin-bottom: 12px;
     align-items: center;
   }
 
@@ -147,7 +177,7 @@
     border-radius: 4px;
     font-size: 13px;
     cursor: pointer;
-    transition: border-color 0.15s, color 0.15s;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
   }
   button:hover { border-color: var(--indigo); color: var(--indigo); }
   button:focus-visible { outline: 2px solid var(--indigo); outline-offset: 1px; }
@@ -165,6 +195,36 @@
   }
   button.ghost:hover { color: var(--clay-deep); border-color: transparent; }
 
+  button.timing {
+    background: var(--sage);
+    border-color: var(--sage-deep);
+    color: #fff;
+  }
+  button.timing:hover { color: #fff; border-color: var(--sage-deep); }
+
+  .mode-switch {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .mode-switch button {
+    border: none;
+    border-radius: 0;
+    border-right: 1px solid var(--line);
+    background: #fff;
+    padding: 8px 12px;
+  }
+  .mode-switch button:last-child { border-right: none; }
+  .mode-switch button.active {
+    background: var(--indigo);
+    color: #fff;
+  }
+  .mode-switch button.active:hover {
+    color: #fff;
+    background: #2e3b50;
+  }
+
   .pick-stage {
     text-align: center;
     min-height: 34px;
@@ -179,6 +239,7 @@
     list-style: none;
     margin: 0 0 22px;
     padding: 0;
+    overflow: visible;
   }
 
   ul.roster li {
@@ -188,6 +249,7 @@
     gap: 12px;
     padding: 11px 4px;
     border-bottom: 1px dotted var(--line);
+    position: relative;
   }
   ul.roster li:focus-within,
   ul.roster li.focused {
@@ -197,7 +259,7 @@
     background: rgba(201,166,107,0.14);
   }
 
-  .name-block { display: flex; flex-direction: column; }
+  .name-block { display: flex; flex-direction: column; min-width: 0; }
   .name {
     font-family: "Noto Serif TC", serif;
     font-size: 16px;
@@ -207,8 +269,11 @@
     color: var(--ink-soft);
     margin-top: 2px;
   }
+  .meta.ok {
+    color: var(--sage-deep);
+  }
 
-  .stamps { display: flex; gap: 6px; align-items: center; }
+  .stamps { display: flex; gap: 6px; align-items: center; position: relative; flex-shrink: 0; }
 
   .stamp {
     width: 30px;
@@ -235,6 +300,45 @@
     color: #fff;
   }
   .stamp:hover { border-color: var(--indigo); }
+
+  .verify-pop {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 8;
+    width: 188px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: 0 8px 22px rgba(46,42,38,0.08);
+    padding: 10px;
+  }
+  .verify-pop input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    font-family: "Noto Serif TC", serif;
+    font-size: 20px;
+    letter-spacing: 0.28em;
+    text-align: center;
+    padding: 6px 0;
+    color: var(--ink);
+  }
+  .verify-pop input:focus { outline: none; border-bottom-color: var(--indigo); }
+  .verify-pop .verify-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .verify-pop .verify-row button { flex: 1; padding: 6px 8px; }
+  .verify-error {
+    display: none;
+    color: var(--clay-deep);
+    font-size: 12px;
+    margin-top: 8px;
+    text-align: center;
+  }
+  .verify-error.show { display: block; }
 
   .empty-state {
     text-align: center;
@@ -277,6 +381,40 @@
     margin-top: 16px;
   }
 
+  .leaderboard {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .leaderboard h2 {
+    font-family: "Noto Serif TC", serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--indigo);
+    margin: 0 0 14px;
+    text-align: center;
+  }
+  .leaderboard ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .leaderboard li {
+    font-family: "Noto Serif TC", serif;
+    font-size: 15px;
+    padding: 8px 4px;
+    border-bottom: 1px dotted var(--line);
+    color: var(--ink);
+  }
+  .leaderboard li:last-child { border-bottom: none; }
+  .leaderboard .hint {
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-style: italic;
+    padding: 8px 0 2px;
+  }
+
   footer {
     text-align: center;
     font-size: 11.5px;
@@ -287,6 +425,7 @@
   @media (max-width: 480px) {
     .book { padding: 28px 20px 24px; }
     h1 { font-size: 24px; }
+    .code-digits { font-size: 42px; }
   }
 </style>
 </head>
@@ -298,6 +437,15 @@
     <h1>點名簿</h1>
     <div class="date" id="todayLabel"></div>
   </header>
+
+  <div class="code-board" id="codeBoard" hidden>
+    <div class="code-kicker">課堂驗證碼</div>
+    <div class="code-digits" id="codeDigits">————</div>
+    <div class="code-actions">
+      <button type="button" class="primary" id="genCodeBtn" onclick="generateCode()">產生驗證碼</button>
+      <button type="button" id="refreshCodeBtn" onclick="generateCode()">換一組</button>
+    </div>
+  </div>
 
   <details class="setup" id="setupBlock">
     <summary>建立 / 匯入名單</summary>
@@ -323,6 +471,14 @@
     <button class="primary" onclick="randomPick()">隨機點名</button>
   </div>
 
+  <div class="toolbar">
+    <div class="mode-switch" role="group" aria-label="點名模式">
+      <button type="button" id="modeManual" class="active" onclick="setCallMode('manual')">手動點名</button>
+      <button type="button" id="modeVerify" onclick="setCallMode('verify')">數字驗證點名</button>
+    </div>
+    <button type="button" id="startBtn" onclick="startRollCall()">開始點名</button>
+  </div>
+
   <div class="pick-stage" id="pickResult"></div>
 
   <ul class="roster" id="studentList"></ul>
@@ -342,6 +498,11 @@
     </div>
   </div>
 
+  <section class="leaderboard" id="leaderboard">
+    <h2>🏆 早起鳥兒排行榜</h2>
+    <ol id="leaderboardList"></ol>
+  </section>
+
   <footer>資料僅儲存在本機瀏覽器（localStorage），重新整理不會遺失</footer>
 </div>
 
@@ -349,7 +510,16 @@
 let students = [];      // {name, status, time}
 let history = [];       // for undo: snapshots
 let pickPool = [];      // remaining names for fair random pick
+let callMode = 'manual';
+let rollStartTime = null;
+let lastPickIdx = null;
+let currentCode = '';
+let openVerifyIdx = null;
+let verifyFlashIdx = null;
+let verifyFlashTimer = null;
 const STORE_KEY = 'rollcall_v1';
+const MODE_KEY = 'rollcall_mode';
+const EARLYBIRD_PREFIX = 'earlybird_';
 
 function todayLabel() {
   const d = new Date();
@@ -358,8 +528,30 @@ function todayLabel() {
 }
 document.getElementById('todayLabel').textContent = todayLabel();
 
+function todayKey() {
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return EARLYBIRD_PREFIX + `${d.getFullYear()}-${m}-${day}`;
+}
+
 function save() {
   localStorage.setItem(STORE_KEY, JSON.stringify(students));
+}
+
+function loadEarlyBird() {
+  try {
+    const raw = localStorage.getItem(todayKey());
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveEarlyBird(entries) {
+  localStorage.setItem(todayKey(), JSON.stringify(entries));
 }
 
 function loadFromStorage() {
@@ -370,8 +562,13 @@ function loadFromStorage() {
       if (Array.isArray(parsed) && parsed.length) {
         students = parsed;
         document.getElementById('setupBlock').removeAttribute('open');
-        renderList();
       }
+    }
+    const savedMode = localStorage.getItem(MODE_KEY);
+    if (savedMode === 'manual' || savedMode === 'verify') {
+      callMode = savedMode;
+    } else if (savedMode === 'number') {
+      callMode = 'verify';
     }
   } catch (e) { /* ignore corrupt data */ }
 }
@@ -384,6 +581,7 @@ function snapshot() {
 function undo() {
   if (history.length === 0) return;
   students = JSON.parse(history.pop());
+  openVerifyIdx = null;
   save();
   renderList();
 }
@@ -394,6 +592,10 @@ function loadStudents() {
   if (!names.length) { alert('請至少輸入一位學生姓名'); return; }
   snapshot();
   students = names.map(name => ({ name, status: 'unmarked', time: '' }));
+  pickPool = [];
+  lastPickIdx = null;
+  openVerifyIdx = null;
+  document.getElementById('pickResult').textContent = '';
   document.getElementById('setupBlock').removeAttribute('open');
   save();
   renderList();
@@ -414,9 +616,17 @@ function clearAll() {
   if (!confirm('確定要清空目前的名單與紀錄嗎？')) return;
   students = [];
   history = [];
+  pickPool = [];
+  lastPickIdx = null;
+  rollStartTime = null;
+  openVerifyIdx = null;
+  currentCode = '';
   localStorage.removeItem(STORE_KEY);
   document.getElementById('nameInput').value = '';
+  document.getElementById('pickResult').textContent = '';
   document.getElementById('setupBlock').setAttribute('open', '');
+  updateStartButton();
+  updateCodeBoard();
   renderList();
 }
 
@@ -425,21 +635,159 @@ function timeNow() {
   return d.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
 }
 
-function setStatus(index, status) {
+function elapsedSeconds() {
+  return Math.round(((performance.now() - rollStartTime) / 1000) * 100) / 100;
+}
+
+function recordEarlyBird(index, seconds, warnIfNotStarted) {
+  if (rollStartTime == null) {
+    if (warnIfNotStarted) {
+      alert('請先按「開始點名」，才會計入早起鳥兒排行榜。');
+    }
+    return;
+  }
+  const entries = loadEarlyBird();
+  const name = students[index].name;
+  const existing = entries.find(e => e.name === name);
+  if (existing) {
+    if (seconds < existing.seconds) existing.seconds = seconds;
+  } else {
+    entries.push({ name, seconds });
+  }
+  saveEarlyBird(entries);
+}
+
+function applyStatus(index, status, toggle) {
   snapshot();
   const s = students[index];
-  s.status = s.status === status ? 'unmarked' : status;
+  const next = toggle && s.status === status ? 'unmarked' : status;
+  if (next === 'present' && s.status !== 'present') {
+    recordEarlyBird(index, rollStartTime == null ? 0 : elapsedSeconds(), true);
+  }
+  s.status = next;
   s.time = s.status === 'unmarked' ? '' : timeNow();
   save();
   renderList();
+}
+
+function setStatus(index, status) {
+  openVerifyIdx = null;
+  applyStatus(index, status, true);
 }
 
 function markAll(status) {
   if (!students.length) { alert('請先建立名單'); return; }
   snapshot();
   const t = timeNow();
-  students.forEach(s => { s.status = status; s.time = t; });
+  openVerifyIdx = null;
+  if (status === 'present') {
+    const seconds = rollStartTime == null ? null : elapsedSeconds();
+    let warned = false;
+    students.forEach((s, i) => {
+      const wasPresent = s.status === 'present';
+      s.status = 'present';
+      s.time = t;
+      if (seconds == null) {
+        if (!warned) {
+          alert('請先按「開始點名」，才會計入早起鳥兒排行榜。');
+          warned = true;
+        }
+      } else if (!wasPresent) {
+        recordEarlyBird(i, seconds, false);
+      }
+    });
+  } else {
+    students.forEach(s => { s.status = status; s.time = t; });
+  }
   save();
+  renderList();
+}
+
+function setCallMode(mode) {
+  callMode = mode;
+  localStorage.setItem(MODE_KEY, mode);
+  document.getElementById('modeManual').classList.toggle('active', mode === 'manual');
+  document.getElementById('modeVerify').classList.toggle('active', mode === 'verify');
+  openVerifyIdx = null;
+  updateCodeBoard();
+  renderList();
+}
+
+function generateCode() {
+  currentCode = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+  updateCodeBoard();
+}
+
+function updateCodeBoard() {
+  const board = document.getElementById('codeBoard');
+  const digits = document.getElementById('codeDigits');
+  const refreshBtn = document.getElementById('refreshCodeBtn');
+  const inVerify = callMode === 'verify';
+  board.hidden = !inVerify;
+  digits.textContent = currentCode || '————';
+  refreshBtn.style.display = currentCode ? '' : 'none';
+}
+
+function startRollCall() {
+  if (!students.length) { alert('請先建立名單'); return; }
+  rollStartTime = performance.now();
+  updateStartButton();
+}
+
+function updateStartButton() {
+  const btn = document.getElementById('startBtn');
+  if (rollStartTime != null) {
+    btn.textContent = '點名計時中';
+    btn.classList.add('timing');
+  } else {
+    btn.textContent = '開始點名';
+    btn.classList.remove('timing');
+  }
+}
+
+function onPresentClick(index) {
+  if (students[index].status === 'present') {
+    setStatus(index, 'present');
+    return;
+  }
+  if (!currentCode) {
+    alert('請先按「產生驗證碼」');
+    return;
+  }
+  openVerifyIdx = index;
+  renderList();
+  const input = document.getElementById('verifyInput');
+  if (input) input.focus();
+}
+
+function digitsOnly(el) {
+  el.value = el.value.replace(/\D/g, '').slice(0, 4);
+}
+
+function submitVerify(index) {
+  const input = document.getElementById('verifyInput');
+  const err = document.getElementById('verifyError');
+  const val = (input.value || '').replace(/\D/g, '');
+  if (val === currentCode) {
+    openVerifyIdx = null;
+    verifyFlashIdx = index;
+    if (verifyFlashTimer) clearTimeout(verifyFlashTimer);
+    verifyFlashTimer = setTimeout(() => {
+      verifyFlashIdx = null;
+      renderList();
+    }, 2200);
+    applyStatus(index, 'present', false);
+    return;
+  }
+  if (err) err.classList.add('show');
+  if (input) {
+    input.focus();
+    input.select();
+  }
+}
+
+function closeVerify() {
+  openVerifyIdx = null;
   renderList();
 }
 
@@ -451,6 +799,7 @@ function renderList() {
   if (!students.length) {
     list.innerHTML = '<div class="empty-state">尚未建立名單 — 在上方展開「建立 / 匯入名單」開始</div>';
     document.getElementById('statsBlock').style.display = 'none';
+    renderLeaderboard();
     return;
   }
 
@@ -462,8 +811,13 @@ function renderList() {
     const li = document.createElement('li');
     li.id = 'stu-' + i;
     li.tabIndex = 0;
+    if (lastPickIdx === i) li.classList.add('spotlight');
     li.addEventListener('keydown', e => {
-      if (e.key === '1') setStatus(i, 'present');
+      if (e.target && e.target.id === 'verifyInput') return;
+      if (e.key === '1') {
+        if (callMode === 'verify') onPresentClick(i);
+        else setStatus(i, 'present');
+      }
       if (e.key === '2') setStatus(i, 'absent');
     });
 
@@ -474,7 +828,12 @@ function renderList() {
     nameEl.textContent = s.name;
     const metaEl = document.createElement('span');
     metaEl.className = 'meta';
-    metaEl.textContent = s.status === 'unmarked' ? '尚未點名' : (s.status === 'present' ? '出席・' + s.time : '缺席・' + s.time);
+    if (verifyFlashIdx === i && s.status === 'present') {
+      metaEl.classList.add('ok');
+      metaEl.textContent = '✓ 驗證成功';
+    } else {
+      metaEl.textContent = s.status === 'unmarked' ? '尚未點名' : (s.status === 'present' ? '出席・' + s.time : '缺席・' + s.time);
+    }
     nameBlock.appendChild(nameEl);
     nameBlock.appendChild(metaEl);
 
@@ -484,9 +843,12 @@ function renderList() {
     const presentBtn = document.createElement('button');
     presentBtn.className = 'stamp' + (s.status === 'present' ? ' active' : '');
     presentBtn.dataset.kind = 'present';
-    presentBtn.title = '出席（快捷鍵 1）';
+    presentBtn.title = callMode === 'verify' ? '輸入驗證碼標記出席' : '出席（快捷鍵 1）';
     presentBtn.textContent = '✓';
-    presentBtn.onclick = () => setStatus(i, 'present');
+    presentBtn.onclick = () => {
+      if (callMode === 'verify') onPresentClick(i);
+      else setStatus(i, 'present');
+    };
 
     const absentBtn = document.createElement('button');
     absentBtn.className = 'stamp' + (s.status === 'absent' ? ' active' : '');
@@ -498,12 +860,39 @@ function renderList() {
     stamps.appendChild(presentBtn);
     stamps.appendChild(absentBtn);
 
+    if (callMode === 'verify' && openVerifyIdx === i) {
+      const pop = document.createElement('div');
+      pop.className = 'verify-pop';
+      pop.innerHTML =
+        '<input id="verifyInput" type="text" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000" aria-label="驗證碼">' +
+        '<div class="verify-row">' +
+          '<button type="button" class="primary" id="verifySubmit">確認</button>' +
+          '<button type="button" id="verifyCancel">取消</button>' +
+        '</div>' +
+        '<div class="verify-error" id="verifyError">數字錯誤，請再試一次</div>';
+      stamps.appendChild(pop);
+    }
+
     li.appendChild(nameBlock);
     li.appendChild(stamps);
     list.appendChild(li);
   });
 
+  const input = document.getElementById('verifyInput');
+  if (input) {
+    input.addEventListener('input', () => digitsOnly(input));
+    input.addEventListener('keydown', e => {
+      e.stopPropagation();
+      if (e.key === 'Enter') submitVerify(openVerifyIdx);
+      if (e.key === 'Escape') closeVerify();
+    });
+    document.getElementById('verifySubmit').onclick = () => submitVerify(openVerifyIdx);
+    document.getElementById('verifyCancel').onclick = closeVerify;
+    input.focus();
+  }
+
   updateStats();
+  renderLeaderboard();
 }
 
 function updateStats() {
@@ -519,6 +908,26 @@ function updateStats() {
     `總人數 ${total}　出席 ${present}　缺席 ${absent}　未點 ${unmarked}`;
 }
 
+function formatSeconds(n) {
+  return Number(n).toFixed(2);
+}
+
+function renderLeaderboard() {
+  const box = document.getElementById('leaderboardList');
+  const ranked = loadEarlyBird().slice().sort((a, b) => a.seconds - b.seconds).slice(0, 5);
+
+  if (!ranked.length) {
+    box.innerHTML = '<div class="hint">今日尚無紀錄 — 按「開始點名」後標記出席，即可列入排名</div>';
+    return;
+  }
+
+  const medals = ['🥇', '🥈', '🥉', '4.', '5.'];
+  const titles = ['今日第一名', '第二名', '第三名', '第四名', '第五名'];
+  box.innerHTML = ranked.map((e, i) =>
+    `<li>${medals[i]} ${titles[i]}：${e.name}，耗時 ${formatSeconds(e.seconds)} 秒</li>`
+  ).join('');
+}
+
 function randomPick() {
   if (!students.length) { alert('請先建立名單'); return; }
   if (pickPool.length === 0) {
@@ -526,8 +935,10 @@ function randomPick() {
   }
   const poolIdx = Math.floor(Math.random() * pickPool.length);
   const idx = pickPool.splice(poolIdx, 1)[0];
+  lastPickIdx = idx;
 
-  document.getElementById('pickResult').textContent = '本次點到　' + students[idx].name;
+  const stage = document.getElementById('pickResult');
+  stage.textContent = '本次點到　' + students[idx].name;
   document.querySelectorAll('#studentList li').forEach(li => li.classList.remove('spotlight'));
   const li = document.getElementById('stu-' + idx);
   if (li) {
@@ -537,7 +948,6 @@ function randomPick() {
 
   if (pickPool.length === 0) {
     setTimeout(() => {
-      const stage = document.getElementById('pickResult');
       stage.textContent += '　（本輪已全部點完，下次將重新抽選）';
     }, 100);
   }
@@ -547,16 +957,17 @@ function exportResult(kind) {
   if (!students.length) { alert('請先建立名單'); return; }
   const stamp = new Date().toLocaleString('zh-TW');
   let content, mime, filename;
+  const statusText = s => s.status === 'present' ? '出席' : s.status === 'absent' ? '缺席' : '未點名';
 
   if (kind === 'csv') {
     content = '姓名,狀態,時間\n' + students.map(s =>
-      `${s.name},${s.status === 'present' ? '出席' : s.status === 'absent' ? '缺席' : '未點名'},${s.time || ''}`
+      `${s.name},${statusText(s)},${s.time || ''}`
     ).join('\n');
     mime = 'text/csv;charset=utf-8';
     filename = '點名結果.csv';
   } else {
     content = `點名結果（${stamp}）\n\n` + students.map(s =>
-      `${s.name}：${s.status === 'present' ? '出席' : s.status === 'absent' ? '缺席' : '未點名'} ${s.time ? '(' + s.time + ')' : ''}`
+      `${s.name}：${statusText(s)} ${s.time ? '(' + s.time + ')' : ''}`
     ).join('\n');
     mime = 'text/plain;charset=utf-8';
     filename = '點名結果.txt';
@@ -572,6 +983,8 @@ function exportResult(kind) {
 }
 
 loadFromStorage();
+setCallMode(callMode);
+updateStartButton();
 renderList();
 </script>
 
